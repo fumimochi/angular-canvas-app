@@ -1,0 +1,14 @@
+<div class="figures" (click)="draw($event)">
+    <button class="rectangle">rectangle</button>
+    <button class="circle">circle</button>
+    <button class="line">line</button>
+    <label for="uploader">Select image:</label>
+    <input class="image" type="file" id="uploader">
+</div>
+
+<canvas 
+    #myCanvas 
+    id="c1"
+    width="900"
+    height="900"
+></canvas>
