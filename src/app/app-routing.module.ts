@@ -1,15 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AppRoutes } from './core/routes';
 
 
 const routes: Routes = [
   { 
     path: '',
-    redirectTo: 'paint',
+    redirectTo: AppRoutes.RouteEnum.PAINT,
     pathMatch: 'full'
   },
   {
-    path: 'paint',
+    path: AppRoutes.RouteEnum.PAINT,
     loadChildren: () => 
       import('./modules/paint/paint.module').then(child => child.PaintModule),
   }

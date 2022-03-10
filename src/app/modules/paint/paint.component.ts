@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { PaintElems } from './models';
 import { PaintService } from './paint.service';
 
 @Component({
@@ -23,16 +24,16 @@ export class PaintComponent implements AfterViewInit {
   
   public draw(event) {
     switch(event.target.className) {
-      case 'rectangle': 
+      case PaintElems.ElemEnum.RECTANGLE: 
           this._paintService.rectangle(this.ctx, this.myCanvas);
           break;
-      case 'circle': 
+      case PaintElems.ElemEnum.CIRCLE: 
           this._paintService.circle(this.ctx, this.myCanvas);
           break;
-      case 'line':
+      case PaintElems.ElemEnum.LINE:
           this._paintService.line(this.ctx, this.myCanvas);
           break;
-      case 'image':
+      case PaintElems.ElemEnum.IMAGE:
           this._paintService.image(this.ctx, this.myCanvas);
           break;
     }

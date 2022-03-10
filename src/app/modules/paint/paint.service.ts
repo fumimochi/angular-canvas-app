@@ -76,7 +76,6 @@ export class PaintService {
             }
             reader.readAsDataURL(e.target.files[0]);
         }
-
         const imageLoader  = document.getElementById('uploader');
         imageLoader.addEventListener('change', uploadImage);
 

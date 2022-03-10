@@ -6,12 +6,17 @@
     /* background-image: url(setka.png); */
 }
 .figures {
+    width: 700px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    border: 1px dotted black;
+    background-color: white;
     button, input{
         margin-left: 20px;
-    }
-    label {
-        font-size: 20px;
-        margin-right: -16px;
-        padding-left: 20px;
+        width: 70px;
+        height: 30px;
     }
 }

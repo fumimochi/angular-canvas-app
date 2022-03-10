@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { UploadImageComponent } from './modules/paint/modules/components/upload-image/upload-image.component';
 
 @NgModule({
   declarations: [ AppComponent ],
