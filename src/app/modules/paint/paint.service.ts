@@ -7,13 +7,13 @@ import { fromEvent, map, switchMap } from "rxjs";
 export class PaintService {
     private x: number;
     private y: number;
-    public startX = 0;
-    public startY = 0;
-    public cnvs = document.getElementsByTagName('canvas');
-    public mouseDown$ = fromEvent(this.cnvs, 'mousedown');
-    public mouseUp$ = fromEvent(this.cnvs, 'mouseup');
+    private startX = 0;
+    private startY = 0;
+    private cnvs = document.getElementsByTagName('canvas');
+    private mouseDown$ = fromEvent(this.cnvs, 'mousedown');
+    private mouseUp$ = fromEvent(this.cnvs, 'mouseup');
 
-    public stream$ = this.mouseDown$
+    private stream$ = this.mouseDown$
             .pipe(
                 map((e: MouseEvent) => {
                     this.startX = e.offsetX;
@@ -76,5 +76,10 @@ export class PaintService {
         }
         const imageLoader  = document.getElementById('uploader');
         imageLoader.addEventListener('change', uploadImage);
+
+        return fromEvent(this.cnvs, 'onchange')
+            .subscribe(e => {
+                uploadImage(e)
+            })
     }
 }

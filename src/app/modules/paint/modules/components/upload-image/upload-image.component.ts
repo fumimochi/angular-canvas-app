@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-upload-image',
@@ -7,4 +7,9 @@ import { Component } from '@angular/core';
 })
 export class UploadImageComponent {
 
+  @Output() buttonClick = new EventEmitter();
+
+  public upload() {
+    this.buttonClick.emit();
+  }
 }

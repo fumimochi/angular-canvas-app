@@ -17,6 +17,7 @@ export class PaintComponent implements AfterViewInit {
   private sub1: Subscription;
   private sub2: Subscription;
   private sub3: Subscription;
+  private sub4: Subscription;
 
   private ctx: CanvasRenderingContext2D;
 
@@ -32,6 +33,7 @@ export class PaintComponent implements AfterViewInit {
     this.sub1?.unsubscribe();
     this.sub2?.unsubscribe();
     this.sub3?.unsubscribe();
+    this.sub4?.unsubscribe();
     switch(tool) {
       case PaintElems.ElemEnum.RECTANGLE: 
           this.sub3 = this._paintService.rectangle(this.ctx);
@@ -44,7 +46,7 @@ export class PaintComponent implements AfterViewInit {
           // this.sub1.unsubscribe()
           break;
       case PaintElems.ElemEnum.IMAGE:
-          this._paintService.image(this.ctx, this.myCanvas);
+          this.sub4 = this._paintService.image(this.ctx, this.myCanvas);
           break;        
     }
   }
