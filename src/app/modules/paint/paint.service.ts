@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { fromEvent, map, switchMap } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
@@ -6,65 +7,62 @@ import { Injectable } from "@angular/core";
 export class PaintService {
     private x: number;
     private y: number;
-    
-    public rectangle(ctx, canvas) {
-        let startX = 0;
-        let startY = 0;
-        let oppositeX = 0;
-        let oppositeY = 0;
+    public startX = 0;
+    public startY = 0;
+    public cnvs = document.getElementsByTagName('canvas');
+    public mouseDown$ = fromEvent(this.cnvs, 'mousedown');
+    public mouseUp$ = fromEvent(this.cnvs, 'mouseup');
 
-        canvas.nativeElement.onmousedown = (e) => {
-            startX = e.offsetX;
-            startY = e.offsetY;
+    public stream$ = this.mouseDown$
+            .pipe(
+                map((e: MouseEvent) => {
+                    this.startX = e.offsetX;
+                    this.startY = e.offsetY;
+                }),
+                switchMap(() => {
+                    return this.mouseUp$
+                        .pipe(
+                            map((e: MouseEvent) => {
+                                this.x = e.offsetX;
+                                this.y = e.offsetY;
+                            })
+                        )
+                })
+            )
+    
+    public rectangle(ctx) {
+        return this.stream$.subscribe(() => {
             ctx.beginPath();
-            ctx.moveTo(startX, startY);
-        }
-        canvas.nativeElement.onmouseup = (e) => {
-            oppositeX = e.offsetX;
-            oppositeY = e.offsetY;
-            ctx.lineTo(startX, oppositeY);
-            ctx.lineTo(oppositeX, oppositeY);
-            ctx.lineTo(oppositeX, startY);
+            ctx.moveTo(this.startX, this.startY);
+            ctx.lineTo(this.startX, this.y);
+            ctx.lineTo(this.x, this.y);
+            ctx.lineTo(this.x, this.startY);
             ctx.closePath();
             ctx.stroke();
-        }
+        })
     }
 
-    public circle(ctx, canvas) {
-        let startX = 0;
-        let startY = 0;
-        canvas.nativeElement.onmousedown = (e) => {
-            startX = e.offsetX;
-            startY = e.offsetY;
+    public circle(ctx) {
+        return this.stream$.subscribe(() => {
             ctx.beginPath();
-        }
-        canvas.nativeElement.onmouseup = (e) => {
-            this.x = e.offsetX;
-            this.y = e.offsetY;
-            ctx.arc(startX, startY, Math.sqrt(Math.pow(Math.abs(startX - this.x), 2) + Math.pow(Math.abs(startY - this.y), 2)), 0, Math.PI * 2);
+            ctx.arc(this.startX, this.startY, Math.sqrt(Math.pow(Math.abs(this.startX - this.x), 2) + Math.pow(Math.abs(this.startY - this.y), 2)), 0, Math.PI * 2);
             ctx.stroke();
-        }
+        })
     }
 
-    public line(ctx, canvas) {
-        canvas.nativeElement.onmousedown = (e) => {
-            this.x = e.offsetX;
-            this.y = e.offsetY;
+    public line(ctx) {
+        return this.stream$.subscribe(() => {
             ctx.beginPath();
-            ctx.moveTo(this.x, this.y);
-        }
-        canvas.nativeElement.onmouseup = (e) => {
-            this.x = e.offsetX;
-            this.y = e.offsetY;
+            ctx.moveTo(this.startX, this.startY);
             ctx.lineTo(this.x, this.y);
             ctx.stroke();
-        }
+        })
     }
 
     public image(ctx, canvas) {
         let reader = new FileReader();
         let image = new Image();
-
+        
         const uploadImage = (e) => {
             reader.onload = () => {
                 image.onload = () => {
@@ -78,11 +76,5 @@ export class PaintService {
         }
         const imageLoader  = document.getElementById('uploader');
         imageLoader.addEventListener('change', uploadImage);
-
-        // canvas.nativeElement.onmouseup = (e) => {
-        //     this.x = e.offsetX;
-        //     this.y = e.offsetY;
-        //     ctx.drawImage(image, this.x, this.y);
-        // }
     }
 }

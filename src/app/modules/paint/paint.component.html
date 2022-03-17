@@ -1,7 +1,7 @@
-<div class="figures" (click)="draw($event)">
-    <button class="rectangle">rectangle</button>
-    <button class="circle">circle</button>
-    <button class="line">line</button>
+<div class="figures">
+    <div *ngFor="let tool of tools">    
+        <button (click)="draw(tool)" class="{{tool}}">{{tool}}</button>
+    </div>
     <app-upload-image></app-upload-image>
 </div>
 
