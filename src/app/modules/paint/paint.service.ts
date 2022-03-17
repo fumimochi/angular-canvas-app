@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { fromEvent, map, switchMap } from "rxjs";
+import { fromEvent, map, Subscription, switchMap } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
@@ -12,25 +12,41 @@ export class PaintService {
     private cnvs = document.getElementsByTagName('canvas');
     private mouseDown$ = fromEvent(this.cnvs, 'mousedown');
     private mouseUp$ = fromEvent(this.cnvs, 'mouseup');
+    private sub1$: Subscription;
+    private sub2$: Subscription;
+    private sub3$: Subscription;
+    private sub4$: Subscription;
 
     private stream$ = this.mouseDown$
-            .pipe(
-                map((e: MouseEvent) => {
-                    this.startX = e.offsetX;
-                    this.startY = e.offsetY;
-                }),
-                switchMap(() => {
-                    return this.mouseUp$
-                        .pipe(
-                            map((e: MouseEvent) => {
-                                this.x = e.offsetX;
-                                this.y = e.offsetY;
-                            })
-                        )
-                })
-            )
+        .pipe(
+            map((e: MouseEvent) => {
+                this.startX = e.offsetX;
+                this.startY = e.offsetY;
+            }),
+            switchMap(() => {
+                return this.mouseUp$
+                    .pipe(
+                        map((e: MouseEvent) => {
+                            this.x = e.offsetX;
+                            this.y = e.offsetY;
+                        })
+                    )
+            })
+        )
+
+    private unsubscribe() {
+        this.sub1$?.unsubscribe();
+        this.sub2$?.unsubscribe();
+        this.sub3$?.unsubscribe();
+        this.sub4$?.unsubscribe();
+    }
     
     public rectangle(ctx) {
+        this.unsubscribe();
+        return this.sub1$ = this.forRectangle(ctx);
+    }
+
+    private forRectangle(ctx) {
         return this.stream$.subscribe(() => {
             ctx.beginPath();
             ctx.moveTo(this.startX, this.startY);
@@ -43,6 +59,11 @@ export class PaintService {
     }
 
     public circle(ctx) {
+        this.unsubscribe();
+        return this.sub2$ = this.forCircle(ctx);
+    }
+
+    private forCircle(ctx) {
         return this.stream$.subscribe(() => {
             ctx.beginPath();
             ctx.arc(this.startX, this.startY, Math.sqrt(Math.pow(Math.abs(this.startX - this.x), 2) + Math.pow(Math.abs(this.startY - this.y), 2)), 0, Math.PI * 2);
@@ -50,7 +71,12 @@ export class PaintService {
         })
     }
 
-    public line(ctx) {
+    public line(ctx) { 
+        this.unsubscribe();
+        return this.sub3$ = this.forLine(ctx);
+    }
+
+    private forLine(ctx) {
         return this.stream$.subscribe(() => {
             ctx.beginPath();
             ctx.moveTo(this.startX, this.startY);
@@ -60,6 +86,11 @@ export class PaintService {
     }
 
     public image(ctx, canvas) {
+        this.unsubscribe();
+        return this.sub4$ = this.forImage(ctx, canvas);
+    }
+
+    private forImage(ctx, canvas) {
         let reader = new FileReader();
         let image = new Image();
         
