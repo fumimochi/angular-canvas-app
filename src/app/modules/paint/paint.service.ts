@@ -1,10 +1,11 @@
 import { Injectable } from "@angular/core";
-import { fromEvent, map, Subscription, switchMap } from "rxjs";
+import { filter, fromEvent, map, of, Subscription, switchMap, takeUntil } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
 })
 export class PaintService {
+    private isCreating: boolean = false;
     private x: number;
     private y: number;
     private startX = 0;
@@ -20,6 +21,7 @@ export class PaintService {
     private stream$ = this.mouseDown$
         .pipe(
             map((e: MouseEvent) => {
+                this.isCreating = true;
                 this.startX = e.offsetX;
                 this.startY = e.offsetY;
             }),
@@ -34,20 +36,9 @@ export class PaintService {
             })
         )
 
-    private unsubscribe() {
-        this.sub1$?.unsubscribe();
-        this.sub2$?.unsubscribe();
-        this.sub3$?.unsubscribe();
-        this.sub4$?.unsubscribe();
-    }
-    
-    public rectangle(ctx) {
-        this.unsubscribe();
-        return this.sub1$ = this.forRectangle(ctx);
-    }
 
-    private forRectangle(ctx) {
-        return this.stream$.subscribe(() => {
+    public rectangle(ctx) {
+        return this.sub1$ = this.stream$.subscribe(() => {
             ctx.beginPath();
             ctx.moveTo(this.startX, this.startY);
             ctx.lineTo(this.startX, this.y);
@@ -55,42 +46,30 @@ export class PaintService {
             ctx.lineTo(this.x, this.startY);
             ctx.closePath();
             ctx.stroke();
+            this.sub1$.unsubscribe();
         })
     }
 
     public circle(ctx) {
-        this.unsubscribe();
-        return this.sub2$ = this.forCircle(ctx);
-    }
-
-    private forCircle(ctx) {
-        return this.stream$.subscribe(() => {
+        return this.sub2$ = this.stream$.subscribe(() => {
             ctx.beginPath();
             ctx.arc(this.startX, this.startY, Math.sqrt(Math.pow(Math.abs(this.startX - this.x), 2) + Math.pow(Math.abs(this.startY - this.y), 2)), 0, Math.PI * 2);
             ctx.stroke();
+            this.sub2$.unsubscribe();
         })
     }
 
-    public line(ctx) { 
-        this.unsubscribe();
-        return this.sub3$ = this.forLine(ctx);
-    }
-
-    private forLine(ctx) {
-        return this.stream$.subscribe(() => {
+    public line(ctx) {
+        return this.sub3$ = this.stream$.subscribe(() => {
             ctx.beginPath();
             ctx.moveTo(this.startX, this.startY);
             ctx.lineTo(this.x, this.y);
             ctx.stroke();
+            this.sub3$.unsubscribe();
         })
     }
 
     public image(ctx, canvas) {
-        this.unsubscribe();
-        return this.sub4$ = this.forImage(ctx, canvas);
-    }
-
-    private forImage(ctx, canvas) {
         let reader = new FileReader();
         let image = new Image();
         
