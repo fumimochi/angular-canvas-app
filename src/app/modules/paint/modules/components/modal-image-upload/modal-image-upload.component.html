@@ -1,0 +1,11 @@
+<div [ngClass]="{modal: isModal}">
+   <div class="container">
+    <label id="title">Select image:</label>
+    <div class="input_image">
+        <input class="image" type="file" id="uploader" (click)="upload()">
+    </div>
+    <div>
+        <button (click)="close()" id="ok">OK</button>
+    </div>
+   </div>
+</div>

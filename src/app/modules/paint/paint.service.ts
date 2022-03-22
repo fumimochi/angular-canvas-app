@@ -16,7 +16,8 @@ export class PaintService {
     private sub1$: Subscription;
     private sub2$: Subscription;
     private sub3$: Subscription;
-    private sub4$: Subscription;
+    private event;
+    private func;
 
     private stream$ = this.mouseDown$
         .pipe(
@@ -74,7 +75,8 @@ export class PaintService {
         let image = new Image();
         
         const uploadImage = (e) => {
-            reader.onload = () => {
+            this.event = e;
+            reader.onloadend = () => {
                 image.onload = () => {
                     canvas.width = image.width;
                     canvas.height = image.height;
@@ -82,14 +84,12 @@ export class PaintService {
                 }
                 image.src = `${reader.result}`;
             }
-            reader.readAsDataURL(e.target.files[0]);
+            reader.readAsDataURL(this.event.target.files[0]);
         }
+        this.func = uploadImage;
+
         const imageLoader  = document.getElementById('uploader');
         imageLoader.addEventListener('change', uploadImage);
 
-        return fromEvent(this.cnvs, 'onchange')
-            .subscribe(e => {
-                uploadImage(e)
-            })
     }
 }

@@ -1,14 +1,14 @@
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
-import { UploadImageComponent } from "./modules/components/upload-image/upload-image.component";
 
+import { ModalImageUploadComponent } from "./modules/components/modal-image-upload/modal-image-upload.component";
 import { PaintRoutingModule } from "./paint-routing.module";
 import { PaintComponent } from "./paint.component";
 
 @NgModule({
     declarations: [ 
         PaintComponent,
-        UploadImageComponent
+        ModalImageUploadComponent
     ],
     imports: [
         CommonModule,
