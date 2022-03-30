@@ -3,11 +3,10 @@
         <button (click)="draw(tool)" class="{{tool}}">{{tool}}</button>
     </div>
     <button (click)="openDialog()">Image</button>
+    <button (click)="clear()">clear</button>
 </div>
 
 <canvas 
     #myCanvas 
     id="c1"
-    width="900"
-    height="900"
 ></canvas>
