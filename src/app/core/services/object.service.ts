@@ -10,9 +10,7 @@ export class ObjectService  {
     public draggable: boolean;
     public objectsArray: Array<any> = [];
 
-    constructor() { 
-
-    }
+    constructor() {  }
 
     private addObj(object) {
         this.objectsArray.push(object);

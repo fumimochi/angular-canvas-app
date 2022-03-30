@@ -186,6 +186,9 @@ export class EventsService {
             ctx.lineTo(this.startX + this.staticValue, this.startY - this.staticValue / 2);
             ctx.lineTo(this.startX + this.staticValue, this.startY);
             ctx.closePath();
+            if(this.isHovered) {
+                ctx.lineWidth = 3;
+            }
             ctx.fillStyle = "blue";
             ctx.fill();
             ctx.stroke();
@@ -200,6 +203,9 @@ export class EventsService {
             ctx.beginPath();
             ctx.arc(this.startX, this.startY, (this.staticValue / 2), 0, Math.PI * 2);
             ctx.fillStyle = 'rgb(238, 130, 238)';
+            if(this.isHovered) {
+                ctx.lineWidth = 3;
+            }
             ctx.fill();
             ctx.stroke();
             this.sub2$.unsubscribe();
@@ -213,6 +219,9 @@ export class EventsService {
             ctx.beginPath();
             ctx.moveTo(this.startX, this.startY);
             ctx.lineTo(this.startX + this.staticValue, this.startY);
+            if(this.isHovered) {
+                ctx.lineWidth = 3;
+            }
             ctx.stroke();
             this.sub3$.unsubscribe();
         }) 
