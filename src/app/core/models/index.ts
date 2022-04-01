@@ -8,10 +8,12 @@ export namespace CoreModels {
     }
     export interface ICircle extends IShared {
         radius: number;
+        borderWidth?: number;
     }
     export interface IImage extends IShared {
         width: number;
         height: number;
+        url?: any;
     }
     export interface IShared {
         id: number;

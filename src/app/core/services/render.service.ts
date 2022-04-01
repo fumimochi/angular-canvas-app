@@ -1,50 +1,34 @@
 import { Injectable, OnInit } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
 
-import { CanvasService } from "./canvas.service";
-import { EventsService } from "./events.service";
 import { ObjectService } from "./object.service";
+import { General } from "src/app/modules/paint/objects/general";
 
 @Injectable({
     providedIn: 'root'
 })
-export class RenderService implements OnInit { 
-    private renderCanvas: HTMLCanvasElement;
-    private objectsArray: Array<Object>;
+export class RenderService { 
+    private canvas: HTMLCanvasElement;
+    private context: CanvasRenderingContext2D;
+    private objectsArray: Array<General>;
     
     constructor(
-        private readonly _objectService: ObjectService,
-        private readonly _eventsService: EventsService,
-        private readonly _canvasSerivce: CanvasService
+        // private readonly _objectService: ObjectService,
+        // private readonly _eventsService: EventsService,
     ) { 
-        this.objectsArray = this._objectService.objectsArray;
-     }
+        // this.objectsArray = this._objectService.objectsArray 
+    }
 
-    ngOnInit(): void {
-        this.renderCanvas = this._canvasSerivce.canvas;
+    public initionCanvas(subject: BehaviorSubject<any>) {
+        subject.subscribe(val => {
+            this.canvas = val.canvas;
+            this.context = val.context;
+        })
     }
 
     public redner() {
-        let context = this._canvasSerivce.context;
-        this._canvasSerivce.clearCanvas();
-
         for(let obj of this.objectsArray) {
-            
-            switch(obj['type']) {
-                case 'line':
-                    this._eventsService.drawLine(context);
-                    break; 
-                case 'circle': 
-                    this._eventsService.drawCircle(context);
-                    break;
-                case 'rectangle':
-                    this._eventsService.drawRectangle(context);
-                    break;
-                case 'image':
-                    this._eventsService.drawImage();
-            }
+            obj.draw(this.context, obj);
         }
     }   
-    
-
-
 }

@@ -1,189 +1,204 @@
 import { Injectable } from "@angular/core";
+import { BehaviorSubject, Subscription } from "rxjs";
 
-import { CoreModels } from "../models";
+import { EventsService } from "./events.service";
+import { LineCanvas } from "src/app/modules/paint/objects/line";
+import { ImageCanvas } from "src/app/modules/paint/objects/image";
+import { CircleCanvas } from "src/app/modules/paint/objects/circle";
+import { RectangleCanvas } from "src/app/modules/paint/objects/rectangle";
 
 @Injectable({
     providedIn: 'root'
 })
 export class ObjectService  {
     public id: number = 0;
-    public draggable: boolean;
-    public objectsArray: Array<any> = [];
+    protected staticValue: number = 100;
+    public draggable: boolean = false;
+    public objectsArray: Array<any> = []; 
+    public sub: Subscription;
+    public sub2: Subscription;
+    private canvas: HTMLCanvasElement;
+    private context: CanvasRenderingContext2D;
+    private canvasWidth: number;
+    private canvasHeight: number;
 
-    constructor() {  }
+    constructor(
+        private readonly _eventsService: EventsService
+    ) {  }
 
     private addObj(object) {
         this.objectsArray.push(object);
         console.log(this.objectsArray);
     }
 
+    public initionCanvas(subject: BehaviorSubject<any>) {
+        subject.subscribe(val => {
+            this.canvas = val.canvas;
+            this.context = val.context;
+            this.canvasWidth = val.width;
+            this.canvasHeight = val.height;
+        })
+    }
+    
+    public render() {
+        this.context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+        for(let obj of this.objectsArray) {
+            obj.draw(this.context, obj);
+        }
+    } 
+
     public removeObj(object) {
-        this.objectsArray.filter(obj => JSON.stringify(obj)!==JSON.stringify(object));
+        return this.objectsArray.filter(obj => obj.id !== object.id);
     }
 
-    public image(cordLeft: number, cordTop: number, staticValue: number) {
-        let image = {
-            id: ++this.id,
-            type: 'image',
-            cordLeft,
-            cordTop,
-            draggable: false,
-            width: staticValue,
-            height: staticValue
-        }
-        this.addObj(image);
+    public selectObject() {
+        this.sub.unsubscribe();
+        return this.sub = this._eventsService.creatingStream().subscribe(value => {
+            let startX = value['startX'];
+            let startY = value['startY'];
+            this.draggable = false;
+
+            for(let object of this.objectsArray) {
+
+                switch(object?.type) {
+                    case 'line':
+                        if(startX <= object?.cordLeft + this.staticValue && startY == object?.cordTop) {
+                            this.draggable = true;
+                            console.log('line selected');
+                        }
+                        break;
+                    case 'circle':
+                        if(object.radius / 2 > Math.sqrt(Math.pow(object.cordLeft - startX, 2) + Math.pow(object.cordTop - startY, 2))){
+                            this.draggable = true;
+                            console.log('circle selected');
+                        }
+                        break;
+                    case 'rectangle':
+                        if(startX <= object?.cordLeft + this.staticValue && startY <= object?.cordTop) {
+                            this.draggable = true;
+                            console.log('rectangle selected');
+                        }
+                        break;
+                }
+
+                if(this.draggable) {
+                    return this.sub2 = this._eventsService.draggingStream()
+                        .subscribe(value => {
+                            object.cordLeft = value['endX'];
+                            object.cordTop = value['endY'];
+                            console.log(object);
+                            this.removeObj(object);
+                            this.render();
+                        })
+                }
+                this.sub2.unsubscribe();                
+            }
+            this.draggable = false;
+                this.sub.unsubscribe();
+            return true;
+        })
     }
 
-    public rectangle(cordLeft: number, cordTop: number, staticValue: number) {
-        // let rectangle = new Rectangle(++this.id, this.startX, this.startY, false, this.staticValue, this.staticValue / 2);
-        let rectangle = {
-            id: ++this.id,
-            type: 'rectangle',
-            cordLeft,
-            cordTop,
-            draggable: false,
-            width: staticValue,
-            height: staticValue / 2
-        }
-        this.addObj(rectangle);
+    // public hoverObject() {
+    //     return this.sub2 =  this._eventsService?.hoverStream().subscribe(value => {
+    //         let currX = value['currX'];
+    //         let currY = value['currY'];
+    //         let isHovered: boolean = false;
+    //         for(let object of this.objectsArray) {
+
+    //             switch(object?.type) {
+    //                 case 'line':
+    //                     if(currX <= object?.cordLeft + this.staticValue && currY == object?.cordTop) {
+    //                         isHovered = true;
+    //                     }
+    //                     break;
+    //                 case 'circle':
+    //                     if(object.radius > Math.sqrt(Math.pow(object.cordLeft - currX, 2) + Math.pow(object.cordTop - currY, 2))){
+    //                         isHovered = true;
+    //                     }
+    //                     break;
+    //                 case 'rectangle':
+    //                     if(currX <= object?.cordLeft + this.staticValue && currY <= object?.cordTop) {
+    //                         isHovered = true;
+    //                     }
+    //                     break;
+    //             }
+    //         }
+    //         isHovered ? console.log('item is hovered') : console.log('.');
+    //     })
+    // }
+
+    public drawImage(context) {
+        let image = new ImageCanvas(
+            ++this.id,
+            'image',
+            1,
+            1,
+            false,
+            this.staticValue,
+            this.staticValue
+        );
+        image.draw(context, image);
+        this.objectsArray.push(image);
+
     }
 
-    public circle(cordLeft: number, cordTop: number, staticValue: number) {
-            let circle = {
-            id: ++this.id,
-            type: 'circle',
-            cordLeft,
-            cordTop,
-            draggable: false,
-            radius: staticValue
-        }
-        this.addObj(circle);
+    public drawRectangle(context) {
+        this.sub?.unsubscribe();
+        this.sub = this._eventsService.creatingStream().subscribe(value => {
+            let rectangle = new RectangleCanvas(
+                ++this.id,
+                'rectangle',
+                value['startX'],
+                value['startY'],
+                false,
+                value['size'],
+                value['size'] / 2
+            );
+            rectangle.draw(context, rectangle)
+            this.objectsArray.push(rectangle)
+
+            this.sub.unsubscribe();
+            console.log(this.objectsArray)
+        })
+        
     }
 
-    public line(cordLeft: number, cordTop: number, staticValue: number) {
-        let line = {
-            id: ++this.id,
-            type: 'line',
-            cordLeft,
-            cordTop,
-            draggable: false,
-            length: staticValue
-        }
-        this.addObj(line);
+    public drawCircle(context) {
+        this.sub?.unsubscribe();
+        this.sub = this._eventsService.creatingStream().subscribe(value => {
+            let circle = new CircleCanvas(
+                ++this.id,
+                'circle',
+                value['startX'],
+                value['startY'],
+                false,
+                value['size']
+            );
+            circle.draw(context, circle);
+            this.objectsArray.push(circle);
+
+            this.sub.unsubscribe();
+            console.log(this.objectsArray)
+        })
+    }
+
+    public drawLine(context) {
+        this.sub?.unsubscribe();
+        this.sub = this._eventsService.creatingStream().subscribe(value => {
+            let line =  new LineCanvas(
+                ++this.id, 
+                'line',
+                value['startX'],
+                value['startY'],
+                false,
+                value['size']
+            );
+            line.draw(context, line);
+            this.objectsArray.push(line);
+
+            this.sub.unsubscribe();
+            console.log(this.objectsArray)
+        })
     }
 }
-
-// class ImageLoad extends ObjectService implements CoreModels.IImage {
-//     public width: number;
-//     public height: number;
-
-//     constructor(id, cordLeft, cordTop, draggable, width, height) { 
-//         super();
-//         this.id = id;
-//         this.cordLeft = cordLeft;
-//         this.cordTop = cordTop;
-//         this.draggable = draggable;
-//         this.width = width;
-//         this.height = height;
-//     }
-
-//     drawImage(context, canvas) {
-//         let reader = new FileReader();
-//         let image = new Image();
-//         const uploadImage = (e) => {
-//             reader.onloadend = () => {
-//                 image.onload = () => {
-//                     canvas.width = image.width;
-//                     canvas.height = image.height;
-//                     context.drawImage(image, 0, 0)
-//                 }
-//                 image.src = `${reader.result}`;
-//             }
-//             reader.readAsDataURL(e.target.files[0]);
-//         }
-//         const imageLoader  = document.getElementById('uploader');
-//         imageLoader.addEventListener('change', uploadImage);
-//     }
-// }
-
-// class Rectangle extends ObjectService implements CoreModels.IRectangle {
-//     public width: number;
-//     public height: number;
-
-//     constructor(id, cordLeft, cordTop, draggable, width, height) { 
-//         super();
-//         this.id = id;
-//         this.cordLeft = cordLeft;
-//         this.cordTop = cordTop;
-//         this.draggable = draggable;
-//         this.width = width;
-//         this.height = height;
-//     }
-
-//     drawRectangle(context) {
-//         return this.sub1$ = this.stream$.subscribe(() => {
-//             context.beginPath();
-//             context.moveTo(this.startX, this.startY);
-//             context.lineTo(this.startX, this.startY - this.staticValue / 2);
-//             context.lineTo(this.startX + this.staticValue, this.startY - this.staticValue / 2);
-//             context.lineTo(this.startX + this.staticValue, this.startY);
-//             context.closePath();
-//             context.stroke();
-//             this.sub1$.unsubscribe();
-//         })
-//     }
-// }
-
-// class Line extends ObjectService implements CoreModels.ILine { 
-//     public length: number; 
-
-//     constructor(id, cordLeft, cordTop, draggable, length) { 
-//         super();
-//         this.id = id;
-//         this.cordLeft = cordLeft;
-//         this.cordTop = cordTop;
-//         this.draggable = draggable;
-//         this.length = length;
-//     }
-
-//     drawLine(context) {
-        // return this.sub3$ = this.stream$.subscribe(() => {
-        //     context.beginPath();
-        //     context.moveTo(this.startX, this.startY);
-        //     context.lineTo(this.startX + this.length, this.y);
-        //     context.stroke();
-        //     this.sub3$.unsubscribe();
-        // })
-//     }
-// }
-
-// class Circle extends ObjectService implements CoreModels.ICircle {
-//     public radius: number;
-
-//     constructor(id, cordLeft, cordtTop, draggable, radius) {
-//         super();
-//         this.id = id;
-//         this.cordLeft = cordLeft;
-//         this.cordTop = cordtTop;
-//         this.draggable = draggable;
-//         this.radius = radius;
-//     }
-
-//     drawCircle(context) {
-        // return this.sub2$ = this.stream$.subscribe(() => {
-        //     context.beginPath();
-        //     context.arc(this.startX, this.startY, (this.radius / 2), 0, Math.PI * 2);
-        //     context.stroke();
-        //     this.sub2$.unsubscribe();
-        // })
-//     }
-// }
-
-// abstract class Tool implements CoreModels.IShared {
-//     constructor(public id, public cordLeft, public cordTop, public draggable) { 
-//         this.id = id;
-//         this.cordLeft = cordLeft;
-//         this.cordTop = cordTop;
-//         this.draggable = draggable;
-//     }
-// }

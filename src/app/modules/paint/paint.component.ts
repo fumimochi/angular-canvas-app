@@ -21,7 +21,6 @@ export class PaintComponent implements AfterViewInit {
 
   constructor(
     private readonly _objectService: ObjectService,
-    private readonly _eventsService: EventsService,
     private readonly _canvasService: CanvasService,
     private readonly _dialogRef: MatDialog   
   ) {  }
@@ -29,13 +28,8 @@ export class PaintComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.ctx = this.myCanvas.nativeElement.getContext('2d');
     this.myCanvas.nativeElement.width = this._canvasService.canvasWidth;
-    this.myCanvas.nativeElement.height = this._canvasService.canvasHeight; 
-    this.myCanvas.nativeElement.onmousedown = this._eventsService.creatingStream;
-    this.myCanvas.nativeElement.onmousemove = this._eventsService.draggingStream;
-    this.myCanvas.nativeElement.onmouseup = this._eventsService.stopAction;
-    this.myCanvas.nativeElement.onmouseout = this._eventsService.stopAction;
-    this.myCanvas.nativeElement.onmouseover = this._eventsService.hoverStream;
-    this._canvasService.getData(this.myCanvas.nativeElement, this.ctx);
+    this.myCanvas.nativeElement.height = this._canvasService.canvasHeight;
+    this._canvasService.initialization(this.myCanvas.nativeElement, this.ctx);
   }
 
   public openDialog() {
@@ -50,13 +44,13 @@ export class PaintComponent implements AfterViewInit {
   public draw(tool: any) {
     switch(tool) {
       case PaintElems.ElemEnum.RECTANGLE: 
-          this._eventsService.drawRectangle(this._canvasService.context);
+          this._objectService.drawRectangle(this.ctx);
           break;
       case PaintElems.ElemEnum.CIRCLE:
-          this._eventsService.drawCircle(this._canvasService.context);
+          this._objectService.drawCircle(this.ctx);
           break;
       case PaintElems.ElemEnum.LINE:
-          this._eventsService.drawLine(this._canvasService.context);
+          this._objectService.drawLine(this.ctx);
           break;    
     }
   }
@@ -64,6 +58,10 @@ export class PaintComponent implements AfterViewInit {
   public clear() {
     this._objectService.objectsArray = [];
     this._canvasService.clearCanvas();
+  }
+
+  public selectObject() {
+    this._objectService.selectObject();
   }
 
 }

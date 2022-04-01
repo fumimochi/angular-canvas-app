@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { EventsService } from 'src/app/core/services/events.service';
+import { ObjectService } from 'src/app/core/services/object.service';
 
 @Component({
   selector: 'app-modal-image-upload',
@@ -15,7 +16,7 @@ export class ModalImageUploadComponent {
 
   constructor(
     public dialogRef: MatDialogRef<ModalImageUploadComponent>,
-    private _eventsService: EventsService,
+    private _objectService: ObjectService,
     @Inject(MAT_DIALOG_DATA) public data
   ) { 
     this.isModal = true;
@@ -24,7 +25,7 @@ export class ModalImageUploadComponent {
   }
 
   public upload() {
-    this._eventsService.drawImage();
+    this._objectService.drawImage(this.modalCtx);
   }
 
   public close() {  
