@@ -2,7 +2,6 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { CanvasService } from 'src/app/core/services/canvas.service';
-import { EventsService } from 'src/app/core/services/events.service';
 import { ObjectService } from 'src/app/core/services/object.service';
 import { PaintElems } from './models';
 import { ModalImageUploadComponent } from './modules/components/modal-image-upload/modal-image-upload.component';
@@ -41,6 +40,15 @@ export class PaintComponent implements AfterViewInit {
     }); 
   }
   
+  public clear() {
+    this._objectService.objectsArray = [];
+    this._canvasService.clearCanvas();
+  }
+
+  public selectObject() {
+    this._objectService.selectObject();
+  }
+  
   public draw(tool: any) {
     switch(tool) {
       case PaintElems.ElemEnum.RECTANGLE: 
@@ -54,14 +62,4 @@ export class PaintComponent implements AfterViewInit {
           break;    
     }
   }
-
-  public clear() {
-    this._objectService.objectsArray = [];
-    this._canvasService.clearCanvas();
-  }
-
-  public selectObject() {
-    this._objectService.selectObject();
-  }
-
 }

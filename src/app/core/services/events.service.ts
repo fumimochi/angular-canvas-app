@@ -41,7 +41,6 @@ export class EventsService {
         )
     }  
 
-
     public creatingStream() {
         return this.mouseDown$
         ?.pipe(
@@ -59,11 +58,12 @@ export class EventsService {
 
     public hoverStream() {
         return this.mouseOver$  
-            .pipe(map((event: MouseEvent) => ({
-                currX: event.offsetX,
-                currY: event.offsetY
-            })),
-            takeUntil(this.mouseOut$)
+            .pipe(
+                map((event: MouseEvent) => ({
+                    currX: event.offsetX,
+                    currY: event.offsetY
+                })),
+                takeUntil(this.mouseOut$)
             )
     }
 }

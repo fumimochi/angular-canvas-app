@@ -10,7 +10,8 @@ import { General } from "src/app/modules/paint/objects/general";
 export class RenderService { 
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
-    private objectsArray: Array<General>;
+    private canvasWidth: number;
+    private canvasHeight: number;
     
     constructor(
         // private readonly _objectService: ObjectService,
@@ -23,12 +24,15 @@ export class RenderService {
         subject.subscribe(val => {
             this.canvas = val.canvas;
             this.context = val.context;
+            this.canvasWidth = val.width;
+            this.canvasHeight = val.height;
         })
-    }
+    } 
 
-    public redner() {
-        for(let obj of this.objectsArray) {
+    public render(objectsArray) {
+        this.context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+        for(let obj of objectsArray) {
             obj.draw(this.context, obj);
         }
-    }   
+    } 
 }

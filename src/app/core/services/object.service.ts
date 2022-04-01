@@ -6,6 +6,7 @@ import { LineCanvas } from "src/app/modules/paint/objects/line";
 import { ImageCanvas } from "src/app/modules/paint/objects/image";
 import { CircleCanvas } from "src/app/modules/paint/objects/circle";
 import { RectangleCanvas } from "src/app/modules/paint/objects/rectangle";
+import { RenderService } from "./render.service";
 
 @Injectable({
     providedIn: 'root'
@@ -19,11 +20,10 @@ export class ObjectService  {
     public sub2: Subscription;
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
-    private canvasWidth: number;
-    private canvasHeight: number;
 
     constructor(
-        private readonly _eventsService: EventsService
+        private readonly _eventsService: EventsService,
+        private readonly _renderService: RenderService
     ) {  }
 
     private addObj(object) {
@@ -35,24 +35,15 @@ export class ObjectService  {
         subject.subscribe(val => {
             this.canvas = val.canvas;
             this.context = val.context;
-            this.canvasWidth = val.width;
-            this.canvasHeight = val.height;
         })
     }
-    
-    public render() {
-        this.context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-        for(let obj of this.objectsArray) {
-            obj.draw(this.context, obj);
-        }
-    } 
 
     public removeObj(object) {
         return this.objectsArray.filter(obj => obj.id !== object.id);
     }
 
     public selectObject() {
-        this.sub.unsubscribe();
+        this.sub?.unsubscribe();
         return this.sub = this._eventsService.creatingStream().subscribe(value => {
             let startX = value['startX'];
             let startY = value['startY'];
@@ -62,7 +53,11 @@ export class ObjectService  {
 
                 switch(object?.type) {
                     case 'line':
-                        if(startX <= object?.cordLeft + this.staticValue && startY == object?.cordTop) {
+                        if(
+                            startX <= object?.cordLeft + this.staticValue 
+                            && startX >= object?.cordLeft
+                            && startY == object?.cordTop
+                        ) {
                             this.draggable = true;
                             console.log('line selected');
                         }
@@ -74,10 +69,18 @@ export class ObjectService  {
                         }
                         break;
                     case 'rectangle':
-                        if(startX <= object?.cordLeft + this.staticValue && startY <= object?.cordTop) {
+                        if(
+                            startX <= object?.cordLeft + this.staticValue
+                            && startX >= object?.cordLeft 
+                            && startY <= object?.cordTop 
+                            && startY >= object?.cordTop - this.staticValue / 2
+                        ) {
                             this.draggable = true;
                             console.log('rectangle selected');
                         }
+                        break;
+                    case 'image':
+                        console.log('image selected')
                         break;
                 }
 
@@ -88,13 +91,13 @@ export class ObjectService  {
                             object.cordTop = value['endY'];
                             console.log(object);
                             this.removeObj(object);
-                            this.render();
+                            this._renderService.render(this.objectsArray);
                         })
                 }
-                this.sub2.unsubscribe();                
+                this.sub2?.unsubscribe();                
             }
             this.draggable = false;
-                this.sub.unsubscribe();
+            this.sub?.unsubscribe();
             return true;
         })
     }
@@ -139,8 +142,7 @@ export class ObjectService  {
             this.staticValue
         );
         image.draw(context, image);
-        this.objectsArray.push(image);
-
+        this.addObj(image);
     }
 
     public drawRectangle(context) {
@@ -156,10 +158,8 @@ export class ObjectService  {
                 value['size'] / 2
             );
             rectangle.draw(context, rectangle)
-            this.objectsArray.push(rectangle)
-
+            this.addObj(rectangle)
             this.sub.unsubscribe();
-            console.log(this.objectsArray)
         })
         
     }
@@ -176,10 +176,8 @@ export class ObjectService  {
                 value['size']
             );
             circle.draw(context, circle);
-            this.objectsArray.push(circle);
-
+            this.addObj(circle);
             this.sub.unsubscribe();
-            console.log(this.objectsArray)
         })
     }
 
@@ -195,10 +193,8 @@ export class ObjectService  {
                 value['size']
             );
             line.draw(context, line);
-            this.objectsArray.push(line);
-
+            this.addObj(line);
             this.sub.unsubscribe();
-            console.log(this.objectsArray)
         })
     }
 }
