@@ -25,7 +25,7 @@ export class ModalImageUploadComponent {
   }
 
   public upload() {
-    this._objectService.drawImage(this.modalCtx);
+    this._objectService.createImage(this.modalCtx);
   }
 
   public close() {  

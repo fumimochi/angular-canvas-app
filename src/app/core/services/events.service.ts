@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
-
 import { BehaviorSubject, fromEvent, map, Observable, takeUntil } from "rxjs";
 
+import { RenderService } from "./render.service";
 
 @Injectable({
     providedIn: 'root'
@@ -16,7 +16,7 @@ export class EventsService {
     private mouseOut$: Observable<any>;
 
     constructor(
-        // private readonly _objectService: ObjectService
+        private readonly _renderService: RenderService
     ) {  }   
 
     public initionCanvas(subject: BehaviorSubject<any>) {
@@ -30,7 +30,7 @@ export class EventsService {
         })
     }
 
-    public draggingStream() {
+    public draggingStream(obj, objArray) {
         return this.mouseMove$
         ?.pipe(
             map((event: MouseEvent) => ({
@@ -39,6 +39,11 @@ export class EventsService {
             })),
             takeUntil(this.mouseUp$)
         )
+        .subscribe(value => {
+            obj.cordLeft = value['endX'];
+            obj.cordTop = value['endY'];
+            this._renderService.render(objArray);
+        })
     }  
 
     public creatingStream() {

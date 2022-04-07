@@ -1,12 +1,9 @@
-import { General } from "./general";
-import { CoreModels } from "src/app/core/models";
+import { CommonClass, IObjectConfig, IObjectModel } from "./common-class";
 
-export class LineCanvas extends General implements CoreModels.ILine { 
-    public length: number; 
-
-    constructor(id, type, cordLeft, cordTop, draggable, length) { 
-        super(id, type, cordLeft, cordTop, draggable);
-        this.length = length;
+export class CanvasLine extends CommonClass<ILineModel> { 
+    
+    constructor(config: IObjectConfig<ILineModel>) {
+        super(config);
     }
 
     draw(context: CanvasRenderingContext2D, object: Object) {
@@ -15,4 +12,8 @@ export class LineCanvas extends General implements CoreModels.ILine {
             context.lineTo(object['cordLeft'] + object['length'], object['cordTop']);
             context.stroke();
     }
+}
+
+export interface ILineModel extends IObjectModel {
+    length: number;
 }

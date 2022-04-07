@@ -2,28 +2,27 @@ import { Injectable } from "@angular/core";
 import { BehaviorSubject, Subscription } from "rxjs";
 
 import { EventsService } from "./events.service";
-import { LineCanvas } from "src/app/modules/paint/objects/line";
-import { ImageCanvas } from "src/app/modules/paint/objects/image";
-import { CircleCanvas } from "src/app/modules/paint/objects/circle";
-import { RectangleCanvas } from "src/app/modules/paint/objects/rectangle";
-import { RenderService } from "./render.service";
+import { CanvasLine } from "src/app/modules/paint/objects/line";
+import { CanvasImage } from "src/app/modules/paint/objects/image";
+import { CanvasCircle } from "src/app/modules/paint/objects/circle";
+import { CanvasRectangle } from "src/app/modules/paint/objects/rectangle";
+import { PaintElems } from "src/app/modules/paint/models";
 
 @Injectable({
     providedIn: 'root'
 })
 export class ObjectService  {
-    public id: number = 0;
+    protected id: number = 0;
     protected staticValue: number = 100;
-    public draggable: boolean = false;
+    protected draggable: boolean = false;
     public objectsArray: Array<any> = []; 
-    public sub: Subscription;
-    public sub2: Subscription;
-    private canvas: HTMLCanvasElement;
-    private context: CanvasRenderingContext2D;
+    protected sub: Subscription;
+    protected sub2: Subscription;
+    protected canvas: HTMLCanvasElement;
+    protected context: CanvasRenderingContext2D;
 
     constructor(
         private readonly _eventsService: EventsService,
-        private readonly _renderService: RenderService
     ) {  }
 
     private addObj(object) {
@@ -38,8 +37,56 @@ export class ObjectService  {
         })
     }
 
-    public removeObj(object) {
-        return this.objectsArray.filter(obj => obj.id !== object.id);
+    public creature(tool: any, context) {
+        let object;
+        this.sub?.unsubscribe();
+        this.sub = this._eventsService.creatingStream().subscribe(value => {
+            switch(tool) {
+                case PaintElems.ElemEnum.RECTANGLE:
+                    object = new CanvasRectangle({
+                        injector: null,
+                        model: {
+                            id: ++this.id,
+                            type: 'rectangle',
+                            cordLeft: value['startX'],
+                            cordTop: value['startY'],
+                            draggable: false,
+                            width: value['size'],
+                            height: value['size'] / 2
+                        }
+                    });
+                    break;
+                case PaintElems.ElemEnum.CIRCLE:
+                    object = new CanvasCircle({
+                        injector: null,
+                        model: {
+                            id: ++this.id,
+                            type: 'circle',
+                            cordLeft: value['startX'],
+                            cordTop: value['startY'],
+                            draggable: false,
+                            radius: value['size']
+                        }
+                    });
+                    break;
+                case PaintElems.ElemEnum.LINE:
+                    object = new CanvasLine({
+                        injector: null,
+                        model: {
+                            id: ++this.id,
+                            type: 'line',
+                            cordLeft: value['startX'],
+                            cordTop: value['startY'],
+                            draggable: false,
+                            length: value['size']
+                        }
+                    });
+                    break;
+            }
+            object.draw(context, object['model']);
+            this.addObj(object);
+            this.sub.unsubscribe();
+        })
     }
 
     public selectObject() {
@@ -50,7 +97,7 @@ export class ObjectService  {
             this.draggable = false;
 
             for(let object of this.objectsArray) {
-
+                object = object['model'];
                 switch(object?.type) {
                     case 'line':
                         if(
@@ -85,14 +132,7 @@ export class ObjectService  {
                 }
 
                 if(this.draggable) {
-                    return this.sub2 = this._eventsService.draggingStream()
-                        .subscribe(value => {
-                            object.cordLeft = value['endX'];
-                            object.cordTop = value['endY'];
-                            console.log(object);
-                            this.removeObj(object);
-                            this._renderService.render(this.objectsArray);
-                        })
+                    return this.sub2 = this._eventsService.draggingStream(object, this.objectsArray);                        
                 }
                 this.sub2?.unsubscribe();                
             }
@@ -131,70 +171,22 @@ export class ObjectService  {
     //     })
     // }
 
-    public drawImage(context) {
-        let image = new ImageCanvas(
-            ++this.id,
-            'image',
-            1,
-            1,
-            false,
-            this.staticValue,
-            this.staticValue
+    public createImage(context) {
+        let image = new CanvasImage({
+            injector: null,
+            model: {
+                id: ++this.id,
+                type: 'image',
+                cordLeft: 1,
+                cordTop: 1,
+                draggable: false,
+                width: this.staticValue,
+                height: this.staticValue
+            }
+        }
         );
         image.draw(context, image);
         this.addObj(image);
     }
 
-    public drawRectangle(context) {
-        this.sub?.unsubscribe();
-        this.sub = this._eventsService.creatingStream().subscribe(value => {
-            let rectangle = new RectangleCanvas(
-                ++this.id,
-                'rectangle',
-                value['startX'],
-                value['startY'],
-                false,
-                value['size'],
-                value['size'] / 2
-            );
-            rectangle.draw(context, rectangle)
-            this.addObj(rectangle)
-            this.sub.unsubscribe();
-        })
-        
-    }
-
-    public drawCircle(context) {
-        this.sub?.unsubscribe();
-        this.sub = this._eventsService.creatingStream().subscribe(value => {
-            let circle = new CircleCanvas(
-                ++this.id,
-                'circle',
-                value['startX'],
-                value['startY'],
-                false,
-                value['size']
-            );
-            circle.draw(context, circle);
-            this.addObj(circle);
-            this.sub.unsubscribe();
-        })
-    }
-
-    public drawLine(context) {
-        this.sub?.unsubscribe();
-        this.sub = this._eventsService.creatingStream().subscribe(value => {
-            let line =  new LineCanvas(
-                ++this.id, 
-                'line',
-                value['startX'],
-                value['startY'],
-                false,
-                value['size']
-            );
-            line.draw(context, line);
-            this.addObj(line);
-            this.sub.unsubscribe();
-        })
-    }
 }

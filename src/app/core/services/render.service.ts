@@ -1,8 +1,7 @@
-import { Injectable, OnInit } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 
 import { ObjectService } from "./object.service";
-import { General } from "src/app/modules/paint/objects/general";
 
 @Injectable({
     providedIn: 'root'
@@ -32,7 +31,7 @@ export class RenderService {
     public render(objectsArray) {
         this.context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
         for(let obj of objectsArray) {
-            obj.draw(this.context, obj);
+            obj.draw(this.context, obj['model']);
         }
     } 
 }

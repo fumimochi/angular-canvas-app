@@ -1,12 +1,9 @@
-import { General } from "./general";
-import { CoreModels } from "src/app/core/models";
+import { CommonClass, IObjectConfig, IObjectModel } from "./common-class";
 
-export class CircleCanvas extends General implements CoreModels.ICircle {
-    public radius: number;
-
-    constructor(id, type, cordLeft, cordTop, draggable, radius) {
-        super(id, type, cordLeft, cordTop, draggable);
-        this.radius = radius;
+export class CanvasCircle extends CommonClass<ICircleModel> {
+    
+    constructor(config: IObjectConfig<ICircleModel>) {
+        super(config);
     }
 
     draw(context: CanvasRenderingContext2D, object: Object) {
@@ -16,4 +13,8 @@ export class CircleCanvas extends General implements CoreModels.ICircle {
         context.fill();
         context.stroke();
     }
+}
+
+export interface ICircleModel extends IObjectModel {
+    radius: number;
 }

@@ -1,29 +1,30 @@
-import { General } from "./general";
+import { CommonClass, IObjectConfig, IObjectModel } from "./common-class";
 import { CoreModels } from "src/app/core/models";
 
-export class ImageCanvas extends General implements CoreModels.IImage {
-    public width: number;
-    public height: number;
+export class CanvasImage extends CommonClass<IImageModel> {
 
-    constructor(id, type, cordLeft, cordTop, draggable, width, height) { 
-        super(id, type, cordLeft, cordTop, draggable);
-        this.width = width;
-        this.height = height;
+    constructor(config: IObjectConfig<IImageModel>) { 
+        super(config);
     }
 
     draw(context: CanvasRenderingContext2D, object) {
         let reader = new FileReader();
         let img = new Image();
-        const uploadImage = (e) => {
+        const uploadImage = (event) => {
             reader.onloadend = () => {
                 img.onload = () => {
                     context.drawImage(img, object['cordLeft'], object['cordTop'])
                 }
                 img.src = `${reader.result}`;
             }
-            reader.readAsDataURL(e.target.files[0]);
+            reader.readAsDataURL(event.target.files[0]);
         }
         const imageLoader = document.getElementById('uploader');
         imageLoader.addEventListener('change', uploadImage);
     }
+}
+
+export interface IImageModel extends IObjectModel {
+    width: number;
+    height: number;
 }

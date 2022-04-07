@@ -50,16 +50,7 @@ export class PaintComponent implements AfterViewInit {
   }
   
   public draw(tool: any) {
-    switch(tool) {
-      case PaintElems.ElemEnum.RECTANGLE: 
-          this._objectService.drawRectangle(this.ctx);
-          break;
-      case PaintElems.ElemEnum.CIRCLE:
-          this._objectService.drawCircle(this.ctx);
-          break;
-      case PaintElems.ElemEnum.LINE:
-          this._objectService.drawLine(this.ctx);
-          break;    
-    }
+    this._objectService.creature(tool, this.ctx);
   }
+
 }
