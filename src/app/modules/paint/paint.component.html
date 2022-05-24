@@ -1,13 +1,38 @@
 <div class="figures">
-    <div *ngFor="let tool of tools">    
-        <button (click)="draw(tool)" class="{{tool}}">{{tool}}</button>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="">Gistograms project</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarText"
+      aria-controls="navbarText"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="/paint/canvas_create"
+            >Creature canvas <span class="sr-only">(current)</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/paint/saved_workspaces"
+            >Saved workspaces</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/paint/profile_info">Profile info</a>
+        </li>
+        <li class="nav-item exitItem">
+          <a (click)="logOut()" class="nav-link">Exit</a>
+        </li>
+      </ul>
     </div>
-    <button (click)="openDialog()">Image</button>
-    <button (click)="clear()">clear</button>
+  </nav>
 </div>
 
-<canvas 
-    #myCanvas 
-    id="c1"
-    (click)="selectObject()"
-></canvas>
+<router-outlet></router-outlet>

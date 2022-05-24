@@ -1,0 +1,48 @@
+<div class="btn-group btn-group-toggle customTools" data-toggle="buttons">
+  <label class="btn btn-secondary" *ngFor="let tool of tools">
+    <input
+      type="radio"
+      name="options"
+      id="option1"
+      autocomplete="off"
+      class="{{ tool }}"
+      (click)="draw(tool)"
+    />
+    {{ tool }}
+  </label>
+  <label class="btn btn-secondary">
+    <input
+      type="radio"
+      name="options"
+      id="option2"
+      autocomplete="off"
+      (click)="addText()"
+    />
+    Text
+  </label>
+  <label class="btn btn-secondary">
+    <input
+      type="radio"
+      name="options"
+      id="option3"
+      autocomplete="off"
+      (click)="clear()"
+    />
+    Clear
+  </label>
+</div>
+<div class="canvas">
+  <canvas #myCanvas id="c1" (click)="selectObject()"></canvas>
+</div>
+
+<ng-container #create *ngIf="changingMode; else change">
+  <div class="buttons">
+    <button id="saveCanvas" (click)="saveChanges()">SAVE CHANGES</button>
+  </div>
+</ng-container>
+
+<ng-template #change>
+  <div class="save">
+    <button id="saveCanvas" (click)="saveCanvas()">SAVE CANVAS</button>
+  </div>
+</ng-template>

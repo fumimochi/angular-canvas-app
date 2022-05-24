@@ -1,0 +1,29 @@
+<div class="col-sm-4 col-sm-offset-2 mx-auto mt-5">
+  <p class="text-center display-4">Registration page</p>
+  <form [formGroup]="form">
+    <div class="form-group">
+      <label>Email</label>
+      <input type="text" class="form-control" formControlName="email" />
+      <p *ngIf="suchEmailExists" id="loginExists">
+        User with such email exists!
+      </p>
+    </div>
+    <div class="form-group">
+      <label>Nickname</label>
+      <input type="text" class="form-control" formControlName="nickname" />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" class="form-control" formControlName="password" />
+    </div>
+    <br />
+    <button
+      [disabled]="form.invalid"
+      class="btn btn-success"
+      (click)="submitRegistration()"
+    >
+      Registrate!
+    </button>
+    <button class="btn btn-secondary m-2" [routerLink]="'../'">Go back</button>
+  </form>
+</div>

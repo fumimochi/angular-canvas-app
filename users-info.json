@@ -1,0 +1,299 @@
+{
+  "users": [
+    {
+      "email": "aaa@mail.ru",
+      "nickname": "bebra",
+      "password": "1234",
+      "canvas": [
+        {
+          "id": 1,
+          "title": "Canvas 1",
+          "timeCreation": "2022-05-22T17:15:01.719Z",
+          "objects": [
+            {
+              "injector": null,
+              "model": {
+                "id": 1,
+                "type": "superellipse",
+                "cordLeft": 550,
+                "cordTop": 495,
+                "draggable": false,
+                "height": 30,
+                "width": 200
+              }
+            },
+            {
+              "injector": null,
+              "model": {
+                "id": 2,
+                "type": "circle",
+                "cordLeft": 771,
+                "cordTop": 290,
+                "draggable": false,
+                "radius": 200
+              }
+            },
+            {
+              "injector": null,
+              "model": {
+                "id": 1,
+                "type": "superellipse",
+                "cordLeft": 327,
+                "cordTop": 220,
+                "draggable": false,
+                "height": 30,
+                "width": 200
+              }
+            },
+            {
+              "injector": null,
+              "model": {
+                "id": 2,
+                "type": "circle",
+                "cordLeft": 1083,
+                "cordTop": 199,
+                "draggable": false,
+                "radius": 200
+              }
+            },
+            {
+              "injector": null,
+              "model": {
+                "id": 3,
+                "type": "superellipse",
+                "cordLeft": 994,
+                "cordTop": 533,
+                "draggable": false,
+                "height": 30,
+                "width": 200
+              }
+            },
+            {
+              "injector": null,
+              "model": {
+                "id": 4,
+                "type": "line",
+                "cordLeft": 514,
+                "cordTop": 127,
+                "draggable": false,
+                "endX": 780,
+                "endY": 133,
+                "length": 266
+              }
+            },
+            {
+              "injector": null,
+              "model": {
+                "id": 5,
+                "type": "superellipse",
+                "cordLeft": 323,
+                "cordTop": 39,
+                "draggable": false,
+                "height": 30,
+                "width": 200
+              }
+            },
+            {
+              "injector": null,
+              "model": {
+                "id": 6,
+                "type": "rhombus",
+                "cordLeft": 233,
+                "cordTop": 588,
+                "draggable": false,
+                "width": 300,
+                "height": 150
+              }
+            },
+            {
+              "injector": null,
+              "model": {
+                "id": 7,
+                "type": "parallelogram",
+                "cordLeft": 575,
+                "cordTop": 760,
+                "draggable": false,
+                "length": 200,
+                "height": 120
+              }
+            },
+            {
+              "injector": null,
+              "model": {
+                "id": 8,
+                "type": "rectangle",
+                "cordLeft": 241,
+                "cordTop": 399,
+                "draggable": false,
+                "width": 200,
+                "height": 100
+              }
+            },
+            {
+              "injector": null,
+              "model": {
+                "id": 9,
+                "type": "line",
+                "cordLeft": 512,
+                "cordTop": 125,
+                "draggable": false,
+                "endX": 525,
+                "endY": 306,
+                "length": 181
+              }
+            },
+            {
+              "injector": null,
+              "model": {
+                "id": 10,
+                "type": "line",
+                "cordLeft": 520,
+                "cordTop": 303,
+                "draggable": false,
+                "endX": 618,
+                "endY": 302,
+                "length": 98
+              }
+            }
+          ],
+          "inputs": [
+            {
+              "id": 1,
+              "text": "",
+              "cordTop": 159,
+              "cordLeft": 312
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Canvas 2",
+          "timeCreation": "2022-05-22T19:50:03.445Z",
+          "objects": [
+            {
+              "injector": null,
+              "model": {
+                "id": 1,
+                "type": "circle",
+                "cordLeft": 604,
+                "cordTop": 211,
+                "draggable": false,
+                "radius": 200
+              }
+            },
+            {
+              "injector": null,
+              "model": {
+                "id": 2,
+                "type": "line",
+                "cordLeft": 764,
+                "cordTop": 162,
+                "draggable": false,
+                "endX": 764,
+                "endY": 162,
+                "length": 0
+              }
+            },
+            {
+              "injector": null,
+              "model": {
+                "id": 3,
+                "type": "line",
+                "cordLeft": 916,
+                "cordTop": 292,
+                "draggable": false,
+                "endX": 957,
+                "endY": 85,
+                "length": 207
+              }
+            },
+            {
+              "injector": null,
+              "model": {
+                "id": 4,
+                "type": "line",
+                "cordLeft": 456,
+                "cordTop": 69,
+                "draggable": false,
+                "endX": 623,
+                "endY": 78,
+                "length": 167
+              }
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Canvas 3",
+          "timeCreation": "2022-05-22T19:55:14.512Z",
+          "objects": [
+            {
+              "injector": null,
+              "model": {
+                "id": 1,
+                "type": "rhombus",
+                "cordLeft": 550,
+                "cordTop": 206,
+                "draggable": false,
+                "width": 300,
+                "height": 150
+              }
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "title": "Canvas 4",
+          "timeCreation": "2022-05-24T07:59:02.153Z",
+          "objects": [
+            {
+              "injector": null,
+              "model": {
+                "id": 1,
+                "type": "circle",
+                "cordLeft": 347,
+                "cordTop": 450,
+                "draggable": false,
+                "radius": 200
+              }
+            },
+            {
+              "injector": null,
+              "model": {
+                "id": 2,
+                "type": "superellipse",
+                "cordLeft": 950,
+                "cordTop": 200,
+                "draggable": false,
+                "height": 30,
+                "width": 200
+              }
+            }
+          ],
+          "inputs": [
+            {
+              "id": 1,
+              "text": "3",
+              "cordTop": 395,
+              "cordLeft": 757
+            },
+            {
+              "id": 1,
+              "text": "3",
+              "cordTop": 686,
+              "cordLeft": 1077
+            }
+          ]
+        }
+      ],
+      "id": 1
+    },
+    {
+      "email": "sss@mail.ru",
+      "nickname": "qwezxc",
+      "password": "qwezxc",
+      "canvas": [],
+      "id": 2
+    }
+  ]
+}
