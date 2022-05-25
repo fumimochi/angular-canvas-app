@@ -10,6 +10,7 @@ import { PaintElems } from 'src/app/modules/paint/models';
 import { CanvasRhombus } from 'src/app/modules/paint/objects/rhombus';
 import { CanvasParallelogram } from 'src/app/modules/paint/objects/parallelogram';
 import { CanvasSuperellipse } from 'src/app/modules/paint/objects/superellipse';
+import { RenderService } from './render.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,16 +18,20 @@ import { CanvasSuperellipse } from 'src/app/modules/paint/objects/superellipse';
 export class ObjectService {
   protected textContent: string;
   protected id: number = 0;
-  protected staticValue: number = 100;
+  protected staticValue: number = 200;
   protected draggable: boolean = false;
   public objectsArray: Array<any> = [];
   public inputsArray: [];
   protected sub: Subscription;
   protected sub2: Subscription;
+  protected sizeSub: Subscription;
   protected canvas: HTMLCanvasElement;
   protected context: CanvasRenderingContext2D;
 
-  constructor(private readonly _eventsService: EventsService) {}
+  constructor(
+    private readonly _eventsService: EventsService,
+    private readonly _renderService: RenderService
+  ) {}
 
   private addObj(object) {
     this.objectsArray.push(object);
@@ -155,6 +160,8 @@ export class ObjectService {
   }
 
   private activeForm(object) {
+    this.sizeSub?.unsubscribe();
+
     switch (object.type) {
       case 'rhombus':
         this.context.beginPath();
@@ -216,6 +223,23 @@ export class ObjectService {
         this.context.lineWidth = 2;
         this.context.fill();
         this.context.stroke();
+
+        return (this.sizeSub = this._eventsService
+          .creatingStream()
+          .subscribe((value) => {
+            let startX = value['startX'];
+            let startY = value['startY'];
+
+            if (
+              4 >
+              Math.sqrt(
+                Math.pow(object['cordLeft'] + object['width'] / 2 - startX, 2) +
+                  Math.pow(object['cordTop'] - object['height'] / 2 - startY, 2)
+              )
+            ) {
+              this._eventsService.resizeStream(object, this.objectsArray);
+            }
+          }));
         break;
       case 'circle':
         this.context.beginPath();
@@ -277,6 +301,26 @@ export class ObjectService {
         this.context.lineWidth = 2;
         this.context.fill();
         this.context.stroke();
+
+        return (this.sizeSub = this._eventsService
+          .creatingStream()
+          .subscribe((value) => {
+            let startX = value['startX'];
+            let startY = value['startY'];
+
+            if (
+              4 >
+              Math.sqrt(
+                Math.pow(
+                  object['cordLeft'] + object['radius'] / 2 - startX,
+                  2
+                ) +
+                  Math.pow(object['cordTop'] - object['radius'] / 2 - startY, 2)
+              )
+            ) {
+              this._eventsService.resizeStream(object, this.objectsArray);
+            }
+          }));
         break;
       case 'superellipse':
         this.context.beginPath();
@@ -339,6 +383,22 @@ export class ObjectService {
         this.context.fill();
         this.context.stroke();
 
+        return (this.sizeSub = this._eventsService
+          .creatingStream()
+          .subscribe((value) => {
+            let startX = value['startX'];
+            let startY = value['startY'];
+
+            if (
+              4 >
+              Math.sqrt(
+                Math.pow(object['cordLeft'] + object['width'] - startX, 2) +
+                  Math.pow(object['cordTop'] - object['height'] - startY, 2)
+              )
+            ) {
+              this._eventsService.resizeStream(object, this.objectsArray);
+            }
+          }));
         break;
       case 'parallelogram':
         this.context.beginPath();
@@ -400,6 +460,25 @@ export class ObjectService {
         this.context.lineWidth = 2;
         this.context.fill();
         this.context.stroke();
+
+        return (this.sizeSub = this._eventsService
+          .creatingStream()
+          .subscribe((value) => {
+            let startX = value['startX'];
+            let startY = value['startY'];
+
+            if (
+              4 >
+              Math.sqrt(
+                Math.pow(
+                  object['cordLeft'] + object['length'] + 20 - startX,
+                  2
+                ) + Math.pow(object['cordTop'] - object['height'] - startY, 2)
+              )
+            ) {
+              this._eventsService.resizeStream(object, this.objectsArray);
+            }
+          }));
         break;
       case 'rectangle':
         this.context.beginPath();
@@ -461,8 +540,26 @@ export class ObjectService {
         this.context.lineWidth = 2;
         this.context.fill();
         this.context.stroke();
+
+        return (this.sizeSub = this._eventsService
+          .creatingStream()
+          .subscribe((value) => {
+            let startX = value['startX'];
+            let startY = value['startY'];
+
+            if (
+              4 >
+              Math.sqrt(
+                Math.pow(object['cordLeft'] + object['width'] - startX, 2) +
+                  Math.pow(object['cordTop'] - object['height'] - startY, 2)
+              )
+            ) {
+              this._eventsService.resizeStream(object, this.objectsArray);
+            }
+          }));
         break;
     }
+    return 1;
   }
 
   public selectObject() {
@@ -484,19 +581,19 @@ export class ObjectService {
                   Math.abs(object?.cordTop - object?.endY) &&
                 startX <= object?.cordLeft + object?.length &&
                 startX >= object?.cordLeft &&
-                startY <= object?.cordTop + 2.5 &&
-                startY >= object?.cordTop - 2.5
+                startY <= object?.cordTop + 3 &&
+                startY >= object?.cordTop - 3
               ) {
-                console.log('line selected');
+                this.draggable = true;
               } else if (
                 Math.abs(object?.cordLeft - object?.endX) <
                   Math.abs(object?.cordTop - object?.endY) &&
                 startY <= object?.cordTop + object?.length &&
                 startY >= object?.cordTop &&
-                startX <= object?.cordLeft + 2.5 &&
-                startX >= object?.cordLeft - 2.5
+                startX <= object?.cordLeft + 3 &&
+                startX >= object?.cordLeft - 3
               ) {
-                console.log('line selected');
+                this.draggable = true;
               }
               break;
             case 'circle':
@@ -561,12 +658,20 @@ export class ObjectService {
           }
 
           if (this.draggable) {
+            addEventListener('keydown', (e) => {
+              if (e.key == 'Delete') {
+                this.objectsArray = this.objectsArray.filter(
+                  (e) => e.model.id !== object.id
+                );
+              }
+              console.log(this.objectsArray);
+              this._renderService.renderSaved(this.objectsArray);
+            });
             inputs.forEach((e) => (e.style.display = 'none'));
             return (this.sub2 = this._eventsService.draggingStream(
               object,
               this.objectsArray
             ));
-          } else {
           }
           this.sub2?.unsubscribe();
         }

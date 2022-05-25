@@ -4,6 +4,7 @@ import {
   fromEvent,
   map,
   Observable,
+  Subscription,
   switchMap,
   takeUntil,
 } from 'rxjs';
@@ -16,6 +17,7 @@ import { RenderService } from './render.service';
 export class EventsService {
   private canvas: HTMLCanvasElement;
   protected staticValue: number = 200;
+  protected sub3: Subscription;
   private mouseMove$: Observable<any>;
   private mouseDown$: Observable<any>;
   private mouseOver$: Observable<any>;
@@ -51,6 +53,44 @@ export class EventsService {
       });
   }
 
+  public resizeStream(obj, array) {
+    return this.mouseMove$
+      ?.pipe(
+        map((event: MouseEvent) => ({
+          endX: event.offsetX,
+          endY: event.offsetY,
+        })),
+        takeUntil(this.mouseUp$)
+      )
+      .subscribe((value) => {
+        switch (obj?.type) {
+          case 'circle':
+            obj.radius = Math.sqrt(
+              Math.pow(Math.abs(obj.cordLeft - value['endX']), 2) +
+                Math.pow(Math.abs(obj.cordTop - value['endY']), 2)
+            );
+            break;
+          case 'rhombus':
+            obj.height = Math.abs(obj.cordTop - value['endY']);
+            obj.width = Math.abs(obj.cordLeft - value['endX']);
+            break;
+          case 'parallelogram':
+            obj.height = Math.abs(obj.cordTop - value['endY']);
+            obj.length = Math.abs(obj.cordLeft - 20 - value['endX']);
+            break;
+          case 'superellipse':
+            obj.height = Math.abs(obj.cordTop + obj.height - value['endY']);
+            obj.width = Math.abs(obj.cordLeft + obj.width - value['endX']);
+            break;
+          case 'rectangle':
+            obj.height = Math.abs(obj.cordTop - value['endY']);
+            obj.width = Math.abs(obj.cordLeft - value['endX']);
+            break;
+        }
+        this._renderService.renderSaved(array);
+      });
+  }
+
   public creatingStream() {
     return this.mouseDown$?.pipe(
       map((event: MouseEvent) => ({
@@ -79,8 +119,6 @@ export class EventsService {
       })
     );
   }
-
-  public resizingStream() {}
 
   public hoverStream() {
     return this.mouseOver$.pipe(

@@ -27,16 +27,16 @@
               "model": {
                 "id": 2,
                 "type": "circle",
-                "cordLeft": 771,
-                "cordTop": 290,
+                "cordLeft": 995,
+                "cordTop": 194,
                 "draggable": false,
-                "radius": 200
+                "radius": 242.49536078036627
               }
             },
             {
               "injector": null,
               "model": {
-                "id": 1,
+                "id": 3,
                 "type": "superellipse",
                 "cordLeft": 327,
                 "cordTop": 220,
@@ -48,30 +48,30 @@
             {
               "injector": null,
               "model": {
-                "id": 2,
-                "type": "circle",
-                "cordLeft": 1083,
-                "cordTop": 199,
-                "draggable": false,
-                "radius": 200
-              }
-            },
-            {
-              "injector": null,
-              "model": {
-                "id": 3,
-                "type": "superellipse",
-                "cordLeft": 994,
-                "cordTop": 533,
-                "draggable": false,
-                "height": 30,
-                "width": 200
-              }
-            },
-            {
-              "injector": null,
-              "model": {
                 "id": 4,
+                "type": "circle",
+                "cordLeft": 134,
+                "cordTop": 156,
+                "draggable": false,
+                "radius": 191.9505144562004
+              }
+            },
+            {
+              "injector": null,
+              "model": {
+                "id": 5,
+                "type": "superellipse",
+                "cordLeft": 763,
+                "cordTop": 396,
+                "draggable": false,
+                "height": 40,
+                "width": 238
+              }
+            },
+            {
+              "injector": null,
+              "model": {
+                "id": 6,
                 "type": "line",
                 "cordLeft": 514,
                 "cordTop": 127,
@@ -84,7 +84,7 @@
             {
               "injector": null,
               "model": {
-                "id": 5,
+                "id": 7,
                 "type": "superellipse",
                 "cordLeft": 323,
                 "cordTop": 39,
@@ -96,43 +96,43 @@
             {
               "injector": null,
               "model": {
-                "id": 6,
+                "id": 8,
                 "type": "rhombus",
-                "cordLeft": 233,
-                "cordTop": 588,
+                "cordLeft": 972,
+                "cordTop": 608,
                 "draggable": false,
                 "width": 300,
-                "height": 150
-              }
-            },
-            {
-              "injector": null,
-              "model": {
-                "id": 7,
-                "type": "parallelogram",
-                "cordLeft": 575,
-                "cordTop": 760,
-                "draggable": false,
-                "length": 200,
-                "height": 120
-              }
-            },
-            {
-              "injector": null,
-              "model": {
-                "id": 8,
-                "type": "rectangle",
-                "cordLeft": 241,
-                "cordTop": 399,
-                "draggable": false,
-                "width": 200,
-                "height": 100
+                "height": 125
               }
             },
             {
               "injector": null,
               "model": {
                 "id": 9,
+                "type": "parallelogram",
+                "cordLeft": 905,
+                "cordTop": 821,
+                "draggable": false,
+                "length": 254,
+                "height": 92
+              }
+            },
+            {
+              "injector": null,
+              "model": {
+                "id": 10,
+                "type": "rectangle",
+                "cordLeft": 60,
+                "cordTop": 510,
+                "draggable": false,
+                "width": 254,
+                "height": 205
+              }
+            },
+            {
+              "injector": null,
+              "model": {
+                "id": 11,
                 "type": "line",
                 "cordLeft": 512,
                 "cordTop": 125,
@@ -145,7 +145,7 @@
             {
               "injector": null,
               "model": {
-                "id": 10,
+                "id": 12,
                 "type": "line",
                 "cordLeft": 520,
                 "cordTop": 303,
@@ -153,6 +153,19 @@
                 "endX": 618,
                 "endY": 302,
                 "length": 98
+              }
+            },
+            {
+              "injector": null,
+              "model": {
+                "id": 13,
+                "type": "line",
+                "cordLeft": 782,
+                "cordTop": 132,
+                "draggable": false,
+                "endX": 782,
+                "endY": 213,
+                "length": 81
               }
             }
           ],
